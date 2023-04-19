@@ -10,7 +10,12 @@
 #  updated_at      :datetime         not null
 #
 class User < ApplicationRecord
+    after_initialize :ensure_session_token
     validates :username, :password, presence: true
+    validates :password_digest, :session_token, presence: true 
+    validates :session_token, uniqueness: {case_sensitive: true }
+    validates :password, length: {minimum: 6}, allow_nil: true
+
 
 
     attr_reader :password
@@ -34,5 +39,10 @@ class User < ApplicationRecord
         end
     end
 
-    # def 
+    def ensure_session_token
+        self.session_token ||= generate_session_token
+    end
+
+
+    
 end
